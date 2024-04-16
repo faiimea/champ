@@ -96,7 +96,7 @@ def load_image(img_cv2, detector):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Inference SMPL with 4D-Humans")
-    parser.add_argument("--device", type=int, default=0, help="GPU device ID")
+    parser.add_argument("--device", type=int, default=1, help="GPU device ID")
     parser.add_argument(
         "--reference_imgs_folder",
         type=str,
@@ -155,7 +155,6 @@ if __name__ == "__main__":
     for i in range(3):
         detectron2_cfg.model.roi_heads.box_predictors[i].test_score_thresh = 0.25
     detector = DefaultPredictor_Lazy(detectron2_cfg)
-
     model = model.to(args.device)
     detector.model.to(args.device)
     # This PyRender is only used for visualizing, we use Blender after to render different conditions.

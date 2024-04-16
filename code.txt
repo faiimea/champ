@@ -1,0 +1,26 @@
+python infer_pair.py  --config configs/transmomo.yaml --checkpoint transmomo_mixamo_36_800_24/checkpoints/autoencoder_00200000.pt --source /home/fazhong/studio/transmomo.pytorch/transmomo_mixamo_36_800_24_results/motion_TY_12_body_PUMPKINHULK_L_9.npy --target /home/fazhong/studio/transmomo.pytorch/transmomo_mixamo_36_800_24_results/motion_TY_13_body_ANDROMEDA_11.npy --source_width 1280 --source_height 720  --target_height 1920 --target_width 1080
+python infer_pair.py  --config configs/transmomo.yaml --checkpoint transmomo_mixamo_36_800_24/checkpoints/autoencoder_00200000.pt --source /home/fazhong/studio/transmomo.pytorch/data/mixamo/36_800_24/test/PUMPKINHULK_L/Back_Squat/motions/2.npy --target /home/fazhong/studio/transmomo.pytorch/data/mixamo/36_800_24/test/PUMPKINHULK_L/Golf_Post_Shot/motions/3.npy --source_width 1280 --source_height 720  --target_height 1280 --target_width 720
+python test.py --config configs/transmomo.yaml  --checkpoint transmomo_mixamo_36_800_24/checkpoints/autoencoder_00200000.pt --out_dir out_transmomo_mixamo_36_800_24_results
+
+
+## Data Preprocess
+
+export PATH=/home/lfz/workspace/blender-3.6.0-linux-x64:$PATH
+
+% Prepare Video
+
+mkdir -p driving_videos/Video_2/images
+ffmpeg -i ./my_data/kms.mp4 -c:v png driving_videos/Video_2/images/%04d.png
+
+% Fit SMPl on reference_imgs and driving Video
+%% Here to ensure the reference_imgs folder if there is correct image
+
+CUDA_VISIBLE_DEVICES=1 python -m scripts.data_processors.smpl.generate_smpls --reference_imgs_folder reference_imgs --driving_video_path driving_videos/Video_2 --device 0
+
+python -m scripts.data_processors.smpl.smpl_transfer --reference_path ./reference_imgs/smpl_results/imgA.npy --driving_path driving_videos/Video_2 --output_folder transferd_result --figure_transfer --view_transfer
+
+CUDA_VISIBLE_DEVICES=1 python -m scripts.data_processors.smpl.smpl_transfer --reference_path ./reference_imgs/smpl_results/imgA.npy --driving_path noise/Video_2_2 --output_folder transferd_result --figure_transfer --view_transfer
+
+blender scripts/data_processors/smpl/blend/smpl_rendering.blend --background --python scripts/data_processors/smpl/render_condition_maps.py -- --driving_path transferd_result/smpl_results --reference_path reference_imgs/images/imgA.png
+
+python -m scripts.data_processors.dwpose.generate_dwpose --input transferd_result/normal --output transferd_result/dwpose

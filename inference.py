@@ -161,7 +161,7 @@ def main(cfg):
         datefmt="%m/%d/%Y %H:%M:%S",
         level=logging.INFO,
     )
-
+    my_device = 'cuda:1'
     save_dir = setup_savedir(cfg)
     logging.info(f"Running inference ...")
 
@@ -183,10 +183,10 @@ def main(cfg):
 
     image_enc = CLIPVisionModelWithProjection.from_pretrained(
         cfg.image_encoder_path,
-    ).to(dtype=weight_dtype, device="cuda")
+    ).to(dtype=weight_dtype, device=my_device)
 
     vae = AutoencoderKL.from_pretrained(cfg.vae_model_path).to(
-        dtype=weight_dtype, device="cuda"
+        dtype=weight_dtype, device=my_device
     )
 
     denoising_unet = UNet3DConditionModel.from_pretrained_2d(
@@ -194,12 +194,12 @@ def main(cfg):
         cfg.motion_module_path,
         subfolder="unet",
         unet_additional_kwargs=cfg.unet_additional_kwargs,
-    ).to(dtype=weight_dtype, device="cuda")
+    ).to(dtype=weight_dtype, device=my_device)
 
     reference_unet = UNet2DConditionModel.from_pretrained(
         cfg.base_model_path,
         subfolder="unet",
-    ).to(device="cuda", dtype=weight_dtype)
+    ).to(device=my_device, dtype=weight_dtype)
 
     guidance_encoder_group = setup_guidance_encoder(cfg)
 
@@ -247,7 +247,7 @@ def main(cfg):
         reference_control_writer=reference_control_writer,
         reference_control_reader=reference_control_reader,
         guidance_encoder_group=guidance_encoder_group,
-    ).to("cuda", dtype=weight_dtype)
+    ).to(my_device, dtype=weight_dtype)
 
     if cfg.enable_xformers_memory_efficient_attention:
         if is_xformers_available():
@@ -275,7 +275,7 @@ def main(cfg):
         video_length=video_length,
         width=cfg.width,
         height=cfg.height,
-        device="cuda",
+        device=my_device,
         dtype=weight_dtype,
     )  # (1, c, f, h, w)
 
@@ -306,6 +306,7 @@ def main(cfg):
 
 
 if __name__ == "__main__":
+    
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default="./configs/inference.yaml")
