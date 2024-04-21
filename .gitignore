@@ -12,11 +12,6 @@ driving_videos/
 DWPose/
 my_data/
 noise/
-reference_imgs/
-reference_imgs_kms/
-reference_imgs_old/
-transferd_result/
-transferd_result_/
-transferd_result_kms/
-transferd_result_ole/
 *.mp4
+transfer_set/
+reference_imgs_set/

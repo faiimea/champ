@@ -9,18 +9,19 @@ export PATH=/home/lfz/workspace/blender-3.6.0-linux-x64:$PATH
 
 % Prepare Video
 
-mkdir -p driving_videos/Video_2/images
-ffmpeg -i ./my_data/kms.mp4 -c:v png driving_videos/Video_2/images/%04d.png
+mkdir -p driving_videos/{Video_Name}/images
+ffmpeg -i {Video_Path} -c:v png driving_videos/{Video_Name}/images/%04d.png
 
 % Fit SMPl on reference_imgs and driving Video
 %% Here to ensure the reference_imgs folder if there is correct image
+% Ensure the image is named as img.png
+CUDA_VISIBLE_DEVICES={Device_id} python -m scripts.data_processors.smpl.generate_smpls --reference_imgs_folder {Reference_Image_Path} --driving_video_path driving_videos/{Video_Name} --device 0
+CUDA_VISIBLE_DEVICES={Device_id} python -m scripts.data_processors.smpl.smpl_transfer --reference_path {Reference_Image_Path}/smpl_results/img.npy --driving_path driving_videos/{Video_Name} --output_folder {Result_Name} --figure_transfer --view_transfer
+blender scripts/data_processors/smpl/blend/smpl_rendering.blend --background --python scripts/data_processors/smpl/render_condition_maps.py -- --driving_path {Result_Name}/smpl_results --reference_path {Reference_Image_Path}/images/img.png
+python -m scripts.data_processors.dwpose.generate_dwpose --input {Result_Name}/normal --output {Result_Name}/dwpose
 
-CUDA_VISIBLE_DEVICES=1 python -m scripts.data_processors.smpl.generate_smpls --reference_imgs_folder reference_imgs --driving_video_path driving_videos/Video_2 --device 0
+% Utils
+ffmpeg -i ./results/Animation-2024-04-16T22-50-37/grid_wguidance.mp4 -c:v png out/without_noise/%04d.png
+ffmpeg -i ./results/Animation-2024-04-16T21-45-59/grid_wguidance.mp4 -c:v png out/noise/%04d.png
 
-python -m scripts.data_processors.smpl.smpl_transfer --reference_path ./reference_imgs/smpl_results/imgA.npy --driving_path driving_videos/Video_2 --output_folder transferd_result --figure_transfer --view_transfer
-
-CUDA_VISIBLE_DEVICES=1 python -m scripts.data_processors.smpl.smpl_transfer --reference_path ./reference_imgs/smpl_results/imgA.npy --driving_path noise/Video_2_2 --output_folder transferd_result --figure_transfer --view_transfer
-
-blender scripts/data_processors/smpl/blend/smpl_rendering.blend --background --python scripts/data_processors/smpl/render_condition_maps.py -- --driving_path transferd_result/smpl_results --reference_path reference_imgs/images/imgA.png
-
-python -m scripts.data_processors.dwpose.generate_dwpose --input transferd_result/normal --output transferd_result/dwpose
+ffmpeg -framerate 25 -i noise/Video_2_3/images/%04d.png -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p clip_video.mp4

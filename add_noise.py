@@ -31,8 +31,8 @@ def process_images(input_directory, output_directory):
                 cv2.imwrite(output_img_path, noisy_image)
 
 # Set the paths for the input and output directories
-input_directory = 'driving_videos/Video_2/images'
-output_directory = 'noise/Video_2_2/images'
+input_directory = 'driving_videos/Video_3/images'
+output_directory = 'noise/Video_2_3/images'
 
 # Process the images and save the noisy versions to the output directory
 process_images(input_directory, output_directory)
