@@ -22,6 +22,7 @@
     <a href='https://fudan-generative-vision.github.io/champ/#/'><img src='https://img.shields.io/badge/Project-Page-Green'></a>
     <a href='https://arxiv.org/abs/2403.14781'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a>
     <a href='https://youtu.be/2XVsy9tQRAY'><img src='https://badges.aleen42.com/src/youtube.svg'></a>
+    <a href='assets/wechat.jpeg'><img src='https://badges.aleen42.com/src/wechat.svg'></a>
 </div>
 
 https://github.com/fudan-generative-vision/champ/assets/82803297/b4571be6-dfb0-4926-8440-3db229ebd4aa
@@ -32,6 +33,11 @@ https://github.com/fudan-generative-vision/champ/assets/82803297/b4571be6-dfb0-4
 
 # News
 
+- **`2024/05/05`**:  🎉🎉🎉[Sample training data on HuggingFace](https://huggingface.co/datasets/fudan-generative-ai/champ_trainning_sample) released.
+- **`2024/05/02`**:  🌟🌟🌟Training source code released [#99](https://github.com/fudan-generative-vision/champ/pull/99).
+- **`2024/04/28`**:  👏👏👏Smooth SMPLs in Blender method released [#96](https://github.com/fudan-generative-vision/champ/pull/96).
+- **`2024/04/26`**:  🚁Great Blender Adds-on [CEB Studios
+](https://www.patreon.com/cebstudios/posts) for various SMPL process!
 - **`2024/04/12`**: ✨✨✨SMPL & Rendering scripts released! Champ your dance videos now💃🤸‍♂️🕺. See [docs](https://github.com/fudan-generative-vision/champ/blob/master/docs/data_process.md).
   
 - **`2024/03/30`**: 🚀🚀🚀Amazing [ComfyUI Wrapper](https://github.com/kijai/ComfyUI-champWrapper) by community. Here is the [video tutorial](https://www.youtube.com/watch?app=desktop&v=cbElsTBv2-A). Thanks to [@kijai](https://github.com/kijai)🥳
@@ -171,12 +177,52 @@ The default motion-02 in `inference.yaml` has about 250 frames, requires ~20GB V
 
 **Note**: If your VRAM is insufficient, you can switch to a shorter motion sequence or cut out a segment from a long sequence. We provide a frame range selector in `inference.yaml`, which you can replace with a list of `[min_frame_index, max_frame_index]` to conveniently cut out a segment from the sequence.
 
+# Train the Model
+
+The training process consists of two distinct stages. For more information, refer to the `Training Section` in the [paper on arXiv](https://arxiv.org/abs/2403.14781).
+
+## Prepare Datasets
+
+Prepare your own training videos with human motion (or use [our sample training data on HuggingFace](https://huggingface.co/datasets/fudan-generative-ai/champ_trainning_sample)) and modify `data.video_folder` value in training config yaml.
+
+All training videos need to be processed into SMPL & DWPose format. Refer to the [Data Process doc](https://github.com/fudan-generative-vision/champ/blob/master/docs/data_process.md).
+
+The directory structure will be like this:
+```txt
+/training_data/
+|-- video01/          # A video data frame
+|   |-- depth/        # Depth frame sequance
+|   |-- dwpose/       # Dwpose frame sequance
+|   |-- mask/         # Mask frame sequance
+|   |-- normal/       # Normal map frame sequance
+|   `-- semantic_map/ # Semanic map frame sequance
+|-- video02/
+|   |-- ...
+|   `-- ...
+`-- videoN/
+|-- ...
+`-- ...
+```
+
+Select another small batch of data as the validation set, and modify the `validation.ref_images` and `validation.guidance_folders` roots in training config yaml.
+
+## Run Training Scripts
+
+To train the Champ model, use the following command:
+```shell
+# Run training script of stage1
+accelerate launch train_s1.py --config configs/train/stage1.yaml
+
+# Modify the `stage1_ckpt_dir` value in yaml and run training script of stage2
+accelerate launch train_s2.py --config configs/train/stage2.yaml
+```
+
 # Datasets
 
 | Type | HuggingFace |       ETA       |
 | :----: | :----------------------------------------------------------------------------------------- | :-------------: |
 |   Inference   | **[SMPL motion samples](https://huggingface.co/datasets/fudan-generative-ai/champ_motions_example)** | Thu Apr 18 2024 |
-|   Training | **[Sample datasets for Training]()** | Coming Soon🚀🚀 |
+|   Training | **[Sample datasets for Training](https://huggingface.co/datasets/fudan-generative-ai/champ_trainning_sample)** | Sun May 05 2024 |
 # Roadmap
 
 | Status | Milestone                                                                                  |       ETA       |
@@ -185,10 +231,10 @@ The default motion-02 in `inference.yaml` has about 250 frames, requires ~20GB V
 |   ✅   | **[Model and test data on Huggingface](https://huggingface.co/fudan-generative-ai/champ)** | Tue Mar 26 2024 |
 |   ✅   | **[Optimize dependencies and go well on Windows](https://github.com/fudan-generative-vision/champ?tab=readme-ov-file#installation)** | Sun Mar 31 2024 |
 |   ✅   | **[Data preprocessing code release](https://github.com/fudan-generative-vision/champ/blob/master/docs/data_process.md)**                                                    | Fri Apr 12 2024 |
-|   🚀🚀🚀  | **[Gradio demo on HuggingFace]()**                                                  | Thu Apr 18 2024 |
-|   🚀🚀🚀  | **[Training code release]()**                                                  | Fri Apr 19 2024 |
-|   🚀🚀🚀  | **[Sample of training data release on HuggingFace]()**                                                  | Sat Apr 20 2024 |
-|   🚀  | **[Smoothing SMPL motion]()**                                                  | TBD |
+|   ✅   | **[Training code release](https://github.com/fudan-generative-vision/champ/pull/99)**                                                  | Thu May 02 2024 |
+|   ✅   | **[Sample of training data release on HuggingFace](https://huggingface.co/datasets/fudan-generative-ai/champ_trainning_sample)**                                                  | Sun May 05 2024 |
+|   ✅  | **[Smoothing SMPL motion](https://github.com/fudan-generative-vision/champ/pull/96)**                                                  | Sun Apr 28 2024 |
+|   🚀🚀🚀  | **[Gradio demo on HuggingFace]()**                                                  | TBD |
 
 # Citation
 

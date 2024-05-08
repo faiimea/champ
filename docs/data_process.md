@@ -59,9 +59,10 @@ Try Champ with your dance videos! It may take time to setup the environment, fol
     python -m scripts.pretrained_models.download --detectron2
     ```
 4. SMPL model
-    You also need to download the SMPL model.
+
+    Please download the SMPL model from the official site [https://smpl.is.tue.mpg.de/download.php](https://smpl.is.tue.mpg.de/download.php).
+    Then move the `.pkl` model to `4D-Humans/data`:
     ```shell
-    wget https://github.com/classner/up/raw/master/models/3D/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl
     mkdir -p 4D-Humans/data/
     mv basicModel_neutral_lbs_10_207_0_v1.0.0.pkl 4D-Humans/data/
     ```
@@ -111,9 +112,14 @@ Try Champ with your dance videos! It may take time to setup the environment, fol
     Once finished, you can check `reference_imgs/visualized_imgs` to see the overlay results. To better fit some extreme figures, you may also append `--figure_scale ` to manually change the figure(or shape) of predicted SMPL, from `-10`(extreme fat) to `10`(extreme slim).
 
 
-3. Smooth SMPL (optional)
+3. Smooth SMPL
 
-    **TODO:** Coming Soon.
+    ```shell
+    blender --background --python scripts/data_processors/smpl/smooth_smpls.py --smpls_group_path driving_videos/your_video_1/smpl_results/smpls_group.npz --smoothed_result_path driving_videos/your_video_1/smpl_results/smpls_group.npz
+    ```
+    Ignore the warning message like `unknown argument` printed by Blender. There is also a user-friendlty [CEB Blender Add-on](https://www.patreon.com/posts/ceb-4d-humans-0-102810302) to help you visualize it.
+
+
 
 4. Transfer SMPL
 
