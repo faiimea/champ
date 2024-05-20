@@ -112,6 +112,9 @@ if __name__ == "__main__":
                 result_dict = {key: value for key, value in result_dict_first.items()}
                 result_dict["smpls"] = smpl_outs
                 result_dict["cam_t"] = cam_t
+                result_dict["smpls"] = reference_dict["smpls"]
+                if args.figure_transfer:
+                    result_dict["smpls"] = smpl_outs
                 if args.view_transfer:
                     scaled_focal_length = reference_dict["scaled_focal_length"]
                     result_dict["cam_t"] = reference_dict["cam_t"]

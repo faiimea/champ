@@ -2,8 +2,8 @@ exp_name: Animation
 width: 512
 height: 512
 data:
-  ref_image_path: 'reference_imgs_set/ref_cxk/images/img.png'  # reference image path
-  guidance_data_folder: 'transfer_set/clip_smooth_test_human'  # corresponding motion sequence folder
+  ref_image_path: 'reference_imgs_set/fat/images/img.png'  # reference image path
+  guidance_data_folder: 'transfer_set/fat_test_1'  # corresponding motion sequence folder
   #guidance_data_folder: 'example_data/motions/motion-02'
   #frame_range: [0, 100]  # [Optional] specify a frame range: [min_frame_idx, max_frame_idx] to select a clip from a motion sequence  
   frame_range: [0, 100]
