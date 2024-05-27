@@ -112,7 +112,9 @@ if __name__ == "__main__":
                 result_dict = {key: value for key, value in result_dict_first.items()}
                 result_dict["smpls"] = smpl_outs
                 result_dict["cam_t"] = cam_t
-                result_dict["smpls"] = reference_dict["smpls"]
+                result_dict["smpls"]["betas"] = reference_dict["smpls"]["betas"]
+                # print(smpl_outs)
+                # print(reference_dict["smpls"])
                 if args.figure_transfer:
                     result_dict["smpls"] = smpl_outs
                 if args.view_transfer:
