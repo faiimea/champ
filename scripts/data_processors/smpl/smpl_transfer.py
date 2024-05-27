@@ -112,11 +112,9 @@ if __name__ == "__main__":
                 result_dict = {key: value for key, value in result_dict_first.items()}
                 result_dict["smpls"] = smpl_outs
                 result_dict["cam_t"] = cam_t
-                result_dict["smpls"]["betas"] = reference_dict["smpls"]["betas"]
-                # print(smpl_outs)
-                # print(reference_dict["smpls"])
-                if args.figure_transfer:
-                    result_dict["smpls"] = smpl_outs
+                result_dict["scaled_focal_length"] = foc_len
+                if not args.figure_transfer:
+                    result_dict["smpls"]["betas"] = reference_dict["smpls"]["betas"]
                 if args.view_transfer:
                     scaled_focal_length = reference_dict["scaled_focal_length"]
                     result_dict["cam_t"] = reference_dict["cam_t"]
